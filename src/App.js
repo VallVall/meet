@@ -48,31 +48,27 @@ export const App = () => {
   const [savedOffers, setSavedOffers] = React.useState([]);
 
   const handleShowCamera = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        if (!videoRef.current) return;
+    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+      if (!videoRef.current) return;
 
-        videoRef.current.srcObject = stream;
-        stream.getTracks().forEach((track) => {
-          peer.addTrack(track, stream);
-        });
-        setVideo(true);
+      videoRef.current.srcObject = stream;
+      stream.getTracks().forEach((track) => {
+        peer.addTrack(track, stream);
       });
+      setVideo(true);
+    });
   };
 
   const handleCall = () =>
-    peer
-      .createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true })
-      .then((offer) => {
-        peer.setLocalDescription(offer).then(() => {
-          setCalling(true);
-          offersRef.add({
-            name: uniqName,
-            offer: JSON.stringify(offer),
-          });
+    peer.createOffer({ offerToReceiveVideo: true }).then((offer) => {
+      peer.setLocalDescription(offer).then(() => {
+        setCalling(true);
+        offersRef.add({
+          name: uniqName,
+          offer: JSON.stringify(offer),
         });
       });
+    });
 
   const handleSaveOffers = () => {
     if (!offers) return;
